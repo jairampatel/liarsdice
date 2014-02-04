@@ -1,6 +1,5 @@
 <script>
-	var peer = new Peer({
-		key: '{{key}}', 
+	var peer = new Peer('hi',{
 		debug:3,
 		logFunction: function() {
 		    var copy = Array.prototype.slice.call(arguments).join(' ');
@@ -16,4 +15,6 @@
 
 </script>
 
-Hello, your pid is <span id="pid"></span>
+<div id="actions">
+	Hello, your pid is {{this.id}}
+</div>

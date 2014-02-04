@@ -37,8 +37,9 @@ app.get('/',function(req,res){
 });
 
 app.get('/play',function(req,res){
+	console.log('query: ' + req.query.id);
 	res.render('play',{
-		key: req.query.id
+		id: req.query.id
 	});
 });
 
