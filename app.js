@@ -24,6 +24,9 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
+var PeerServer = require('peer').PeerServer;
+var server = new PeerServer({ port: 9000 });
+
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
@@ -32,6 +35,13 @@ if ('development' == app.get('env')) {
 app.get('/',function(req,res){
 	res.render('home');
 });
+
+app.get('/play',function(req,res){
+	res.render('play',{
+		key: req.query.id
+	});
+});
+
 http.createServer(app).listen(app.get('port'), function(){
   
 });

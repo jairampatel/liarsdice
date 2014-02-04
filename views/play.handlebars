@@ -1,0 +1,19 @@
+<script>
+	var peer = new Peer({
+		key: '{{key}}', 
+		debug:3,
+		logFunction: function() {
+		    var copy = Array.prototype.slice.call(arguments).join(' ');
+		    console.log(copy);
+		  }
+	});
+
+	var connections = {};
+
+	peer.on('open',function(id){
+		$('#pid').text(id);
+	})
+
+</script>
+
+Hello, your pid is <span id="pid"></span>
