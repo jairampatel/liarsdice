@@ -1,2 +1,2 @@
-liarsdice
+Liar's Dice
 =========
