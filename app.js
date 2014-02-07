@@ -1,7 +1,6 @@
 /**
  * Module dependencies.
  */
-
 var express = require('express');
 var routes = require('./routes');
 var user = require('./routes/user');
@@ -9,7 +8,14 @@ var http = require('http');
 var path = require('path');
 var exphbs  = require('express3-handlebars');
 
-var app = express();
+var app = require('express')()
+  , server = http.createServer(app)
+  , io = require('socket.io').listen(server);
+
+
+
+
+
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -24,25 +30,32 @@ app.use(express.methodOverride());
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
-var PeerServer = require('peer').PeerServer;
-var server = new PeerServer({ port: 9000 });
-
 // development only
 if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/',function(req,res){
-	res.render('home');
+io.of('/game').on('connection',function(socket){
+	console.log('connected server side');
+	socket.on('join',function(room){
+		console.log('somebody joined: ' + room);
+		socket.join(room);
+		socket.broadcast.to(room).emit('enterRoom');
+	});
 });
 
 app.get('/play',function(req,res){
-	console.log('query: ' + req.query.id);
 	res.render('play',{
 		id: req.query.id
 	});
 });
 
-http.createServer(app).listen(app.get('port'), function(){
+app.get('/',function(req,res){
+	res.render('home');
+});
+
+
+
+server.listen(app.get('port'), function(){
   
 });

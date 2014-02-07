@@ -1,18 +1,16 @@
 <script>
-	var peer = new Peer('hi',{
-		debug:3,
-		logFunction: function() {
-		    var copy = Array.prototype.slice.call(arguments).join(' ');
-		    console.log(copy);
-		  }
+	var socket = io.connect('http://localhost/game');
+
+	console.log('socket: ' + socket);
+
+	socket.on('connect',function(data){
+		console.log('created connection');
+		socket.emit('join','{{this.id}}');
 	});
 
-	var connections = {};
-
-	peer.on('open',function(id){
-		$('#pid').text(id);
-	})
-
+	socket.on('enterRoom',function(data){
+		console.log('somebody entered the room');
+	});
 </script>
 
 <div id="actions">
