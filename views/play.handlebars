@@ -1,18 +1,111 @@
 <script>
-	var socket = io.connect('http://localhost/game');
-
-	console.log('socket: ' + socket);
+	var socket = io.connect('http://localhost');
 
 	socket.on('connect',function(data){
-		console.log('created connection');
-		socket.emit('join','{{this.id}}');
+		setPlayer('{{this.name}}');
+		socket.emit('join',{
+			room: '{{this.id}}',
+			name: '{{this.name}}',
+			});
 	});
 
+	socket.on('getPlayers',function(data){
+		addUsers(data.players);
+	});
 	socket.on('enterRoom',function(data){
-		console.log('somebody entered the room');
+		addUser(data.name, data.id);
 	});
-</script>
+	socket.on('nextTurn',function(data){
+		var nextPlayer = data.nextPlayer;
+		var currentRank = data.currentRank;
+		var currentDiceNumber = data.currentDiceNumber;
+		var currentSelected = data.currentSelected;
 
-<div id="actions">
-	Hello, your pid is {{this.id}}
+		
+		selectPlayer(nextPlayer,'{{this.name}}');
+		updateCurrentRank(currentRank);
+		updateCurrentDiceNumber(currentDiceNumber);
+		updateSelected(currentSelected);
+    	
+
+		console.log('nextPlayer: ' + nextPlayer);
+		console.log('currentRank: ' + currentRank);
+		console.log('currentDiceNumber: ' + currentDiceNumber);
+		console.log('currentSelected: ' + currentSelected);
+
+	});
+	socket.on('dice',function(data){
+		console.log('dice: ' + data.dice);
+		showDice(data.dice);
+	});
+	$(document).ready(function(){
+		hideControls();
+	});
+	
+
+	function startGame(){
+	console.log('room: {{this.id}}');
+		socket.emit('startGame',{
+			room: '{{this.id}}'
+		});
+	}
+	function turnComplete(){
+		hideControls();
+		socket.emit('turnComplete',{
+			room: '{{this.id}}',
+			inputRank: getInputRank(),
+			inputDiceNumber: getInputDiceNumber(),
+		});
+	}
+</script>
+<div class="btn btn-primary" onclick="startGame()">Start Game</div>
+<div id="currentRank">Current Rank: 1</div>
+<div id="currentDiceNumber">Current Dice Number: 1</div>
+
+<div class="btn-group">
+    <button id="inputRank" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+      Rank
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+		<li><a href="#" onclick="setInputRank(1)">1</a></li>
+		<li><a href="#" onclick="setInputRank(2)">2</a></li>
+		<li><a href="#" onclick="setInputRank(3)">3</a></li>
+		<li><a href="#" onclick="setInputRank(4)">4</a></li>
+		<li><a href="#" onclick="setInputRank(5)">5</a></li>
+		<li><a href="#" onclick="setInputRank(6)">6</a></li>
+		<li><a href="#" onclick="setInputRank(7)">7</a></li>
+		<li><a href="#" onclick="setInputRank(8)">8</a></li>
+		<li><a href="#" onclick="setInputRank(9)">9</a></li>
+		<li><a href="#" onclick="setInputRank(10)">10</a></li>
+		<li><a href="#" onclick="setInputRank(11)">11</a></li>
+		<li><a href="#" onclick="setInputRank(12)">12</a></li>
+		<li><a href="#" onclick="setInputRank(13)">13</a></li>
+		<li><a href="#" onclick="setInputRank(14)">14</a></li>
+		<li><a href="#" onclick="setInputRank(15)">15</a></li>
+		<li><a href="#" onclick="setInputRank(16)">16</a></li>
+		<li><a href="#" onclick="setInputRank(17)">17</a></li>
+		<li><a href="#" onclick="setInputRank(18)">18</a></li>
+		<li><a href="#" onclick="setInputRank(19)">19</a></li>
+		<li><a href="#" onclick="setInputRank(20)">20</a></li>
+    </ul>
+</div>
+
+<div class="btn-group">
+    <button id="inputDiceNumber" type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+      Dice Number
+      <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+		<li><a href="#" onclick="setInputDiceNumber(1)">1</a></li>
+		<li><a href="#" onclick="setInputDiceNumber(2)">2</a></li>
+		<li><a href="#" onclick="setInputDiceNumber(3)">3</a></li>
+		<li><a href="#" onclick="setInputDiceNumber(4)">4</a></li>
+		<li><a href="#" onclick="setInputDiceNumber(5)">5</a></li>
+		<li><a href="#" onclick="setInputDiceNumber(6)">6</a></li>
+    </ul>
+</div>
+<div id="claim" class="btn btn-primary" onclick="turnComplete()">Claim</div>
+<div id="playerPool">
+	
 </div>
