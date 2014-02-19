@@ -26,17 +26,10 @@
 		updateCurrentRank(currentRank);
 		updateCurrentDiceNumber(currentDiceNumber);
 		updateSelected(currentSelected);
-    	
-
-		console.log('nextPlayer: ' + nextPlayer);
-		console.log('currentRank: ' + currentRank);
-		console.log('currentDiceNumber: ' + currentDiceNumber);
-		console.log('currentSelected: ' + currentSelected);
-
 	});
 	socket.on('dice',function(data){
 		console.log('dice: ' + data.dice);
-		showDice(data.dice);
+		showDice(data.dice,'{{this.name}}');
 	});
 	$(document).ready(function(){
 		hideControls();

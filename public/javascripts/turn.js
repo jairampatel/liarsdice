@@ -4,24 +4,49 @@ var inputDiceNumber;
 var currentRank;
 var currentDiceNumber;
 
-function showDice(diceArray){
-	console.log('showing dice: ');
+function showDice(diceArray,me){
+	console.log('showing dice');
 	var players = document.getElementsByClassName('player');
 
 	for (var i = 0; i < players.length; ++i) {
 	    var item = players[i];  
 	    var name = item.getElementsByClassName('name')[0];
 	    var diceDiv = item.getElementsByClassName('dice')[0];
-	    for(var j = 0;j < diceArray.length;j++){
-	    	if(name.innerHTML == diceArray[i].name){
-	    		var dice = diceArray[j];
-	    		for(var k = 0;k < dice.length;k++){
-	    			$(diceDiv).append('<div class="die one">  <span class="dot"></span></div>');
-	    		}
-	    		break;
+	    if(name.innerHTML == me){
+	    	for(var j = 0;j < diceArray.length;j++){
+	    		var word = diceNumToWord(diceArray[j]);
+	    		$(diceDiv).append('<div class="die ' + word + '">  <span class="dot"></span></div>');
 	    	}
 	    }
+	    else{
+
+	    }
 	}
+}
+
+function diceNumToWord(num){
+	var word;
+	switch(num){
+		case 1:
+			word = "one";
+		break;
+		case 2:
+			word = "two";
+		break;
+		case 3:
+			word = "three";
+		break;
+		case 4:
+			word = "four";
+		break;
+		case 5:
+			word = "five";
+		break;
+		case 6:
+			word = "six";
+		break;
+	}
+	return word;
 }
 function hideControls(){
 	$("#inputRank").hide();

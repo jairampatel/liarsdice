@@ -35,19 +35,15 @@ var users = {};
 var ROOM_LIMIT = 4;
 
 io.sockets.on('connection', function(socket){	
-
-	users[socket.id] = socket;
-	console.log('saving: ' + socket.id);
-
 	
 	socket.on('join',function(data){		
 		//addToRoom(data.room,data.name);
 		socket.join(data.room);
 
-		addToRoom(data.room,socket.id,data.name);
+		addToRoom(data.room,socket.id,data.name,socket);
 
-		io.sockets.in(data.room).emit('getPlayers', {players: getClients(data.room)});
-
+		//io.sockets.in(data.room).emit('getPlayers', {players: getClients(data.room)});
+		sendToRoom(data.room,"getPlayers",{players: getClients(data.room)});
 		socket.broadcast.to(data.room).emit('enterRoom',{name: data.name, id: socket.id});
 	});
 
@@ -110,18 +106,28 @@ server.listen(app.get('port'), function(){
   
 });
 
-function sendDiceToPlayers(room){
-	var arr = rooms[room]["rooms"];
+function sendToUser(id,name,hash){
+	io.sockets.socket(id).emit(name,hash);
+}
+function sendToRoom(room,name,hash){
+	var arr = io.sockets.clients(room);
 	if(!arr)
 		return;
 	console.log('sending: ' + arr.length);
+	for(var i = 0;i < arr.length;i++)
+	{
+		sendToUser(arr[i].id,name,hash);
+	}
+}
+function sendDiceToPlayers(room){
+	var arr = io.sockets.clients(room);
+	if(!arr)
+		return;
+	console.log('sending dice: ' + arr.length);
 	for(var i = 0;i < arr.length;i++){
 		console.log('sending to: ' + arr[i].id);
 		console.log('socket: ' + users[arr[i].id]);
-		users[arr[i].id].emit('dice',{
-			name: arr[i].name,
-			dice: arr[i].dice
-		});
+		sendToUser(arr[i].id,"dice",{dice: rooms[room]["rooms"][i].dice});
 	}
 }
 function rollDice(room){
@@ -134,6 +140,7 @@ function rollDice(room){
 		for(var j = 0;j < current.diceNumber;j++){
 			current.dice.push(Math.floor(Math.random()*6 + 1));
 		}
+		current.dice.sort();
 	}
 }
 function isInvalidMove(room,name,rank,diceNumber){
@@ -228,7 +235,7 @@ function getClients(room){
 	}
 	return players;
 }
-function addToRoom(room,id,name){
+function addToRoom(room,id,name,socket){
 	if(rooms[room] == null){
 		rooms[room] = {};
 	}
@@ -237,7 +244,9 @@ function addToRoom(room,id,name){
 	}
 	if(rooms[room]["rooms"] == null)
 		rooms[room]["rooms"] = [];
-	if(!containsName(rooms[room]["rooms"],name) && !rooms[room]["started"] && rooms[room]["rooms"].length < ROOM_LIMIT){
+	if(!containsName(rooms[room]["rooms"],name) && 
+		!rooms[room]["started"] && 
+			rooms[room]["rooms"].length < ROOM_LIMIT){
 		rooms[room]["rooms"].push({
 			id: id,
 			name: name,
