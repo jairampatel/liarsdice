@@ -1,5 +1,5 @@
 <script>
-	var socket = io.connect('http://localhost');
+	var socket = io.connect('http://liars-dice.herokuapp.com');
 
 	socket.on('connect',function(data){
 		setPlayer('{{this.name}}');
