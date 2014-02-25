@@ -19,7 +19,9 @@ function showDice(diceArray,me){
 	    	}
 	    }
 	    else{
-
+	    	for(var j = 0;j < diceArray.length;j++){
+	    		$(diceDiv).append('<div class="die zero"> </span></div>');
+	    	}
 	    }
 	}
 }
