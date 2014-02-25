@@ -38,6 +38,7 @@ io.sockets.on('connection', function(socket){
 	
 	socket.on('join',function(data){		
 		//addToRoom(data.room,data.name);
+		console.log("joining room: " + data.name);
 		socket.join(data.room);
 
 		addToRoom(data.room,socket.id,data.name,socket);
