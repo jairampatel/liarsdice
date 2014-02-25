@@ -35,7 +35,7 @@ var users = {};
 var ROOM_LIMIT = 4;
 
 io.sockets.on('connection', function(socket){	
-	
+	console.log("connected");
 	socket.on('join',function(data){		
 		//addToRoom(data.room,data.name);
 		console.log("joining room: " + data.name);
